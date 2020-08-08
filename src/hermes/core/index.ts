@@ -3,7 +3,6 @@
 //--------------------
 import { uuid } from "uuidv4";
 
-// Constants
 // const GET = 'GET'
 // const POST = 'POST'
 
@@ -18,6 +17,7 @@ export interface HermesInitConfig {
 export interface PropsHermes {
   query: string;
   queryUniqueId: string;
+  retry: number | undefined;
 }
 
 enum RequestType {
@@ -31,7 +31,7 @@ enum RequestType {
 // export type RequestType = GET | POST
 
 const DEFAULT_CONFIG = {
-  queryKey: "test"
+  queryKey: null
 };
 
 //--------------------
@@ -50,7 +50,9 @@ interface FaileAction {
   type: ActionType.Failed;
 }
 
+//--------------------
 // Class
+//--------------------
 export class Hermes<PropsHermes> {
   //--------------------
   // Private Members
@@ -63,20 +65,31 @@ export class Hermes<PropsHermes> {
   //--------------------
   public readonly queryKey: string;
   public readonly retry: number;
+  public readonly timeout: number;
   // public data: Object | Array<Object> | null;
   // public state: Object | null;
 
   //--------------------
   // Constructors
   //--------------------
-  public constructor(init: HermesInitConfig = DEFAULT_CONFIG) {
+  public constructor(queryKey: string, init: HermesOptions) {
     if (!init.queryKey || typeof init.queryKey !== "string") {
-      throw new Error("a query property must be provided.");
+      throw new Error("queryKey not provided.");
+    }
+
+    if (init?.retry) {
+      if (typeof init.retry !== "number") {
+        throw new Error("retry value must be a number.");
+      }
+      if (init.retry < 1) {
+        throw new Error("retry value must be a number greater than 1.");
+      }
     }
 
     this.queryKey = init.queryKey;
     this.queryUniqueId = uuid();
     this.retry = init.retry || 0;
+    this.timeout = init.timeout;
 
     // this.config = init.config;
     // this.queryKey = init.queryKey;
@@ -100,6 +113,14 @@ export class Hermes<PropsHermes> {
 
   public getData() {
     return this.data;
+  }
+
+  private setRetry(value: number) {
+    this.retry = value;
+  }
+
+  public getRetry() {
+    return this.retry;
   }
 
   //--------------------
