@@ -3,7 +3,7 @@ import { Hermes } from "../index";
 describe("Hermes Class constructor", () => {
   it("should throw an error when a queryKey property isn't provided", () => {
     expect(() => new Hermes()).toThrowError(
-      new Error("a queryKey property must be provided.")
+      new Error("queryKey must be provided and it must be a string")
     );
   });
 

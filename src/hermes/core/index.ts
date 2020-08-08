@@ -3,10 +3,9 @@
 //--------------------
 import { uuid } from "uuidv4";
 
-// const GET = 'GET'
-// const POST = 'POST'
-
+//--------------------
 // Types
+//--------------------
 export interface HermesInitConfig {
   queryKey: string;
   config?: any;
@@ -25,18 +24,6 @@ enum RequestType {
   POST = "POST"
 }
 
-// type GET = 'GET'
-// type POST = 'POST'
-
-// export type RequestType = GET | POST
-
-const DEFAULT_CONFIG = {
-  queryKey: null
-};
-
-//--------------------
-// Types
-//--------------------
 export enum ActionType {
   Failed = "Failed",
   MarkStale = "MarkStale",
@@ -57,7 +44,6 @@ export class Hermes<PropsHermes> {
   //--------------------
   // Private Members
   //--------------------
-  // private readonly config: HermesInitConfig;
   private readonly queryUniqueId: string;
 
   //--------------------
@@ -66,38 +52,26 @@ export class Hermes<PropsHermes> {
   public readonly queryKey: string;
   public readonly retry: number;
   public readonly timeout: number;
-  // public data: Object | Array<Object> | null;
-  // public state: Object | null;
 
-  //--------------------
+  //--------------------s
   // Constructors
   //--------------------
   public constructor(queryKey: string, init: HermesOptions) {
-    if (!init.queryKey || typeof init.queryKey !== "string") {
-      throw new Error("queryKey not provided.");
+    if (!queryKey || typeof queryKey !== "string") {
+      throw new Error("queryKey must be provided and it must be a string");
     }
 
-    if (init?.retry) {
-      if (typeof init.retry !== "number") {
-        throw new Error("retry value must be a number.");
-      }
-      if (init.retry < 1) {
-        throw new Error("retry value must be a number greater than 1.");
-      }
+    if (typeof init?.retry !== "number") {
+      throw new Error("retry value must be a number.");
+    }
+    if (init?.retry < 1) {
+      throw new Error("retry value must be a number greater than 1.");
     }
 
     this.queryKey = init.queryKey;
     this.queryUniqueId = uuid();
     this.retry = init.retry || 0;
     this.timeout = init.timeout;
-
-    // this.config = init.config;
-    // this.queryKey = init.queryKey;
-    // this.data = null;
-    // this.queryInternalId = uuid();
-    // this.state = {
-    //   data: null
-    // }
   }
 
   // -------------------
